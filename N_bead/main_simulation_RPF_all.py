@@ -15,8 +15,8 @@ stop_time=2000
 total_time=stop_time*4
 save_freq = 1
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920"
-from solver_chain_v11 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920"
+from solver_chain_VAR_Law import StressModel as md
 save_prex='model_chain_N7/'
 model_std = md()
 model_std.load_model(Nbin,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')
@@ -30,8 +30,8 @@ except Exception as e:
     sim_model.save_data(model_std.save_folder)
 
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920_chain-v10-VAR_net_100_100"
-from solver_chain_v10 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920_chain-VAR_net_100_100"
+from solver_chain_VAR import StressModel as md
 save_prex='model_chain_N7/'
 model = md()
 model.load_model(Nbin,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')
@@ -48,8 +48,8 @@ except Exception as e:
 
 
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920_chain-v9-PDE_net_100_100"
-from solver_chain_v9 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920_chain-PDE_net_100_100"
+from solver_chain_PDE import StressModel as md
 save_prex='model_chain_N7/'
 model = md()
 model.load_model(Nbin,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')
@@ -102,8 +102,8 @@ except Exception as e:
 
 
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920_chain-v8-24eign_net_100_100"
-from solver_chain_v8 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920_chain-PDE_Law_net_100_100"
+from solver_chain_PDE_Law import StressModel as md
 save_prex='model_chain_N7/'
 model = md()
 model.load_model(Nbin,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')

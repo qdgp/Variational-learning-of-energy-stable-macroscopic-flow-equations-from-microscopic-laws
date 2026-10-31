@@ -8,7 +8,7 @@ from z_fun import get_solver
 from model_test_set import TestModel
 
 
-save_folder = 'model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920'
+save_folder = 'model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920'
 lammps_folder = '/mnt/gs21/scratch/gepei/DeePN_chain/box_60_60_100_fx_0.016_T_800'
 
 L = np.array([60.0, 60.0, 100.0], dtype=np.float32)

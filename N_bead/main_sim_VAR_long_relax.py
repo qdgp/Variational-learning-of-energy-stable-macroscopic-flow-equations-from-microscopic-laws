@@ -6,16 +6,16 @@ import tensorflow as tf
 rand_seed=4
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920_chain-v10-VAR_net_100_100"
-from solver_chain_v10 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920_chain-VAR_net_100_100"
+from solver_chain_VAR import StressModel as md
 save_prex='model_chain_N7/'
 model = md()
 model.load_model(1,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')
 
 
 Folder,Name='model_chain_N7/',f'/sim_data_{rand_seed}_0.016_dt_0.02_Nbin_60_stop_2000_gamma_170.mat'
-VAR_DeePN_Folder=Folder+'model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920'
-VAR=scipy.io.loadmat(VAR_DeePN_Folder+'_chain-v10-VAR_net_100_100'+Name)
+VAR_DeePN_Folder=Folder+'model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920'
+VAR=scipy.io.loadmat(VAR_DeePN_Folder+'_chain-VAR_net_100_100'+Name)
 c_tmp = VAR['c'][-1,[1]]
 print(c_tmp.shape)
 ds_dc_star, S0=model.get_S0()
@@ -40,4 +40,4 @@ for loop in range(1,800):
     print(c_tmp[0,0,0,0],c_tmp[0,0,2,2])
     c_all[loop] = c_tmp
 
-savemat(VAR_DeePN_Folder+'_chain-v10-VAR_net_100_100'+f'/sim_data_{rand_seed}_0.016_dt_0.02_Nbin_60_stop_2000_gamma_170_relax.mat',{'c':c_all})
+savemat(VAR_DeePN_Folder+'_chain-VAR_net_100_100'+f'/sim_data_{rand_seed}_0.016_dt_0.02_Nbin_60_stop_2000_gamma_170_relax.mat',{'c':c_all})

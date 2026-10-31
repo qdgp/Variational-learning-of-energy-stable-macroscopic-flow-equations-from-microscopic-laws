@@ -6,8 +6,8 @@ import tensorflow as tf
 rand_seed=4
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-save_folder = "model5_macro_chain-v11_c3_temp-bin2_net_100_100_N1920"
-from solver_chain_v11 import StressModel as md
+save_folder = "model5_macro_chain-VAR_Law_c3_temp-bin2_net_100_100_N1920"
+from solver_chain_VAR_Law import StressModel as md
 save_prex='model_chain_N7/'
 model = md()
 model.load_model(1,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')

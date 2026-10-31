@@ -270,7 +270,7 @@ class SimulationModel(object):
 
     def main_eigen(sim_model,model,tf):
         import time
-        from solver_chain_v8 import StressModel as md
+        from solver_chain_PDE_Law import StressModel as md
         model=md()
 
         c_init=model.get_c_init()

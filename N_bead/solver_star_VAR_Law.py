@@ -6,7 +6,7 @@ from solver import solver
 class StressModel(solver):
     kBT=0.25
     Nbonds=6
-    ver='star-v11'
+    ver='star-VAR_Law'
     scale=np.sqrt(0.74239)
 
     def __init__(self,Np=2400):

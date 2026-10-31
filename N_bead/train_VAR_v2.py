@@ -1,7 +1,7 @@
 import os, sys, time, h5py, scipy.io
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 save_folder, rand_seed=sys.argv[1], int(sys.argv[2])
-from solver_chain_v10 import StressModel as md
+from solver_chain_VAR import StressModel as md
 import numpy as np
 import tensorflow as tf
 from model_simulation import SimulationModel

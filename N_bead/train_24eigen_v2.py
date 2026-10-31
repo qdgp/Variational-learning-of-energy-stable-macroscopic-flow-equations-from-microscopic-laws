@@ -19,7 +19,7 @@ test_model=TestModel.main_train_micro(model,xr,ff,tf)
 c_num=model.c_num
 net_size=[100,100]
 xr_ref=load.init('chain')
-from solver_chain_v8 import StressModel as md_eigen
+from solver_chain_PDE_Law import StressModel as md_eigen
 config={'c_num':c_num, 'batch_size':10,
         'E':net_size,'stress':net_size,'H2':net_size,'H1':net_size,
         'save_folder':save_prex+save_folder+'_'+md_eigen.ver+f'_net_{"_".join(map(str,net_size))}'}
