@@ -1,0 +1,38 @@
+#!/bin/bash --login
+#SBATCH --time=4:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=64G
+#SBATCH --job-name=DeePN_test
+#SBATCH --gpus=l40s:1
+#SBATCH --array=4
+#SBATCH --account=general
+#SBATCH --chdir=/mnt/research/MultiscaleML_group/PeiGe/DeePN_entropy/N_bead_github/N_bead
+#SBATCH --output=slurm-%x-%A_%a.out
+
+set -e
+ml purge
+source /mnt/ufs18/nodr/home/gepei/anaconda3/etc/profile.d/conda.sh
+conda activate vscode_gpu
+cd /mnt/research/MultiscaleML_group/PeiGe/DeePN_entropy/N_bead_github/N_bead
+n=$SLURM_ARRAY_TASK_ID
+which python3
+
+nvidia-smi
+
+# Select the test command to run.
+python3 ../validate_models.py
+# python3 ../redraw.py --figure all
+
+# Encode MD tests: chain seed 4, star seed 2.
+# python3 main_test_all_bin_chain.py $n
+# python3 main_test_all_bin_star.py $n
+# python3 main_test_fene_all_bin.py
+
+# Encode SDE tests: N7 seed 4, N15 seed 1; use --mem=128G.
+# python3 main_chain_N7_sde_var.py $n model8_macro_chain-v17_c2_sde-v2-bin32_net_40_40_N1600
+# python3 main_chain_N15_sde_var_N400.py $n model8_macro_chain-N15-v5_c2_sde-bin40-gamma-170_net_40_40_N1600
+
+sleep 5
+sacct --format=JobID,Submit,Partition,CPUTime,Elapsed,MaxRSS,NodeList,ReqCPUS --units=M -j $SLURM_JOBID

@@ -1,0 +1,14 @@
+#!/bin/bash --login
+#SBATCH --job-name=fene_gdot
+#SBATCH --nodes=1
+#SBATCH --ntasks=16
+#SBATCH --mem=64G
+#SBATCH --time=4:00:00
+#SBATCH --account=data-machine
+
+module purge
+module load MATLAB/2025b
+
+cd '/mnt/research/MultiscaleML_group/PeiGe/DeePN_entropy/N_bead_github/N_bead/MD_chain_N7/SDE_data_set_v2'
+matlab -batch "fene_elongation_init"
+

@@ -1,0 +1,18 @@
+#!/bin/bash --login
+#SBATCH --job-name lmp
+#SBATCH --nodes=4-8
+#SBATCH --ntasks=512
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=24:00:00
+#SBATCH -C 'acm'
+#SBATCH --qos=scavenger
+ 
+ml purge
+ml  OpenMPI/4.0.5-GCC-10.2.0
+
+cd '/mnt/research/MultiscaleML_group/PeiGe/DeePN_entropy/N_bead_github/N_bead/MD_chain_N7/box_60_60_100_fx_0.02_T_800_kBT_0.30'
+
+srun -n 512 /mnt/home/gepei/lammps_src/src-huan/lmp_acm -in in_read_restart_flow
+
+sleep 5
+sacct --format=JobID,Submit,Partition,CPUTime,Elapsed,MaxRSS,NodeList,ReqCPUS --units=M -j $SLURM_JOBID 

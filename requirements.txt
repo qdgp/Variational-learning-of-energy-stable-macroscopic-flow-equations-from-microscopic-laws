@@ -1,0 +1,7 @@
+# Observed working environment: Python 3.7.16.
+# Recorded for reproducibility; this is not a newly resolved environment lock.
+numpy==1.21.5
+scipy==1.7.3
+h5py==3.7.0
+matplotlib==3.5.3
+tensorflow==2.9.1

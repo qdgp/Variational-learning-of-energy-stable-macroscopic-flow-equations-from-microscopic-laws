@@ -1,0 +1,51 @@
+dimension       3
+units           lj
+atom_style      full
+communicate     single vel yes cutoff 3.4
+
+neighbor        0.3 multi
+neigh_modify    every 1 delay 1 check no 
+special_bonds   lj 0.0 0.0 0.0
+read_restart    /mnt/gs21/scratch/gepei/DeePN_chain/box_60_60_100_fx_0.02_T_800_kBT_0.30/restart.equil_final
+
+group           sol type 1
+group           poly type 2
+
+pair_style      dpd 0.30 1.0 121116
+pair_coeff      1 1 4.0 5.0 0.25 1.0
+pair_coeff      1 2 0.0 4.0 0.0 1.0
+pair_coeff      2 2 0.1 0.01 0.5 1.0
+
+bond_style      fene 
+bond_coeff      1 0.1 2.3 0.0 0.2 
+
+
+compute         mythermo all temp/partial 0 1 1
+
+fix             1 all nve
+
+timestep        0.002
+
+thermo          1000
+thermo_modify   temp mythermo lost warn flush yes
+
+run             600000
+write_restart   restart.equil_kBT_0.25
+
+pair_style      dpd 0.30 1.0 121116
+pair_coeff      1 1 4.0 5.0 0.25 1.0
+pair_coeff      1 2 0.0 40.0 0.0 1.0
+pair_coeff      2 2 0.002 0.005 0.5 1.0
+
+run             200000
+
+fix             3 sol addforce/huan 4 0.02 0 0 0
+fix             4 all stat/vel 1 1 40 0 1 20 vel1D_Nbin_40
+fix             5 all stat/vel 1 1 20 0 1 20 vel1D_Nbin_20
+
+dump            dump_1 poly custom 200 dump.*.lammpstrj id x y z
+dump_modify     dump_1 first yes flush yes 
+
+run             400000
+unfix           3 
+run             600000

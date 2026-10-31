@@ -1,0 +1,27 @@
+# Research data, trained weights, and notebooks
+*.ipynb
+*.mat
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.lammpstrj
+*.dat
+restart.*
+*.partial
+
+# Generated artifacts and local state
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.out
+*.log
+*.png
+*.pdf
+figures/
+.env
+.env.*
+manifest.json
+validation_*.json
+relocation_report.json
+upstream_dependencies.json
