@@ -1,6 +1,7 @@
 import os, sys, time, h5py, scipy.io
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-from z_fun import get_solver
+from solver_chain_VAR_Law import StressModel as md
+from solver_chain_PDE_Law import StressModel as md_eigen
 import numpy as np
 import tensorflow as tf
 from model_simulation import SimulationModel
@@ -8,7 +9,7 @@ from load_set import load
 from model_test_set import TestModel 
 
 save_folder, rand_seed, data_set=sys.argv[1], int(sys.argv[2]), sys.argv[3]
-md,save_prex=get_solver(save_folder)
+save_prex='model_chain_N7/'
 model = md()
 model.load_model(1,save_prex+'/'+save_folder,f'train_result_seed_{rand_seed}.mat')
 
@@ -19,7 +20,6 @@ test_model=TestModel.main_train_micro(model,xr,ff,tf)
 c_num=model.c_num
 net_size=[100,100]
 xr_ref=load.init('chain')
-from solver_chain_PDE_Law import StressModel as md_eigen
 config={'c_num':c_num, 'batch_size':10,
         'E':net_size,'stress':net_size,'H2':net_size,'H1':net_size,
         'save_folder':save_prex+save_folder+'_'+md_eigen.ver+f'_net_{"_".join(map(str,net_size))}'}

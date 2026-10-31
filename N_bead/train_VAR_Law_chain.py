@@ -1,24 +1,24 @@
 from data_io import savemat
 import os, sys, time, h5py, scipy.io
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-rand_seed,c_num,ver,data_set=int(sys.argv[1]),int(sys.argv[2]),sys.argv[3],sys.argv[4]
+rand_seed,c_num,data_set=int(sys.argv[1]),int(sys.argv[2]),sys.argv[3]
 
-from z_fun import get_solver
-md,save_prex=get_solver(ver)
+from solver_chain_VAR_Law import StressModel as md
+save_prex='model_chain_N7/'
 import numpy as np
 import tensorflow as tf
 from model_simulation import SimulationModel
 from load_set import load
 from model_test_set import TestModel 
 
-net_size=list(map(int, sys.argv[5:]))
+net_size=list(map(int, sys.argv[4:]))
 print(f'rand seed: {rand_seed}, c: {c_num}, net: {net_size}')
 
-xr, ff, stress,Np,data_set_name=load.load(ver,data_set)
+xr, ff, stress,Np,data_set_name=load.load(md.ver,data_set)
 Nsample=xr.shape[0]
 bs = 50
 
-xr_ref=load.init(ver)
+xr_ref=load.init(md.ver)
 config={'c_num':c_num,
         'encoder':[100,100,100],'S':net_size,'B':net_size,'E':net_size,'Sl':net_size,'Br':net_size,'Er':net_size,
         'start_rate' : 1e-03,'decay_step':int(Nsample/bs),'decay_ratio' : 0.95,
