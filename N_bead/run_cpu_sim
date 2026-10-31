@@ -39,12 +39,5 @@ python3 main_simulation_RPF_all.py $n 60
 # python3 main_sim_VAR_DeePN_long_relax.py
 # python3 main_sim_VAR_long_relax.py
 
-# Deterministic elongation: N7 seed 4, N15 seed 1.
-# python3 main_simulation_elongation_N7.py $n model8_macro_chain-v17_c2_sde-v2-bin32_net_40_40_N1600
-# python3 main_simulation_elongation_N15.py $n model8_macro_chain-N15-v5_c2_sde-bin40-gamma-170_net_40_40_N1600
-
-# Figure 4: active VAR branch, seed 4; PDE branch remains commented in Python.
-# python3 main_simulation_elongation_figure4.py $n
-
 sleep 5
 sacct --format=JobID,Submit,Partition,CPUTime,Elapsed,MaxRSS,NodeList,ReqCPUS --units=M -j $SLURM_JOBID

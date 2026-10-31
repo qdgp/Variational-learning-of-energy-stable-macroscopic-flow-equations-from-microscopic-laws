@@ -212,39 +212,6 @@ class SimulationModel(object):
         sim_model.save_data(model.save_folder)
         return sim_model
 
-    def main_MD_M(sim_model,model,stop_time,tf):
-        import time
-        ds_dc_star, S0=model.get_S0()
-        c_init=model.get_c_init()
-        sim_model.save['dn']=model.ver+f'-c{model.c_num}'
-        sim_model.init_c0(c_init)
-        sim_model.init_ES(np.tile(S0.numpy(),[sim_model.Nbin,1]),sim_model.ES)
-
-        @tf.function
-        def get_pred_data(c):
-            ML_H1H2, ML_E, ML_pi_p, S, ds_dc, ML_M= model.get_from_macro(c,ds_dc_star=ds_dc_star,S0=S0)
-            I=tf.eye(3, batch_shape = [model.batch_size],dtype=tf.float32)
-            ML_stress=model.kBT*I+ML_pi_p
-            return ML_E, ML_H1H2, ML_stress, S, ds_dc
-        
-        start_time=time.time() 
-        for loop in range(sim_model.steps):
-            if loop==int(stop_time/sim_model.dt):
-                sim_model.reset_fx(0)
-            c=tf.constant(sim_model.c_tmp,dtype=tf.float32)
-            ML_E, ML_H1H2, ML_stress, S, ds_dc=get_pred_data(c)
-            ML_E, ML_H1H2, ML_stress, S, ds_dc=ML_E.numpy(), ML_H1H2.numpy(), ML_stress.numpy(), S.numpy(), ds_dc.numpy()
-            if sim_model.ES:
-                sim_model.one_step_ES(ML_E,ML_H1H2,ML_stress,S,ds_dc)
-            else:
-                sim_model.one_step(ML_E,ML_H1H2,ML_stress,S)
-            if (loop % sim_model.save_step) == 0:
-                sim_model.collect_data(ML_E,ML_H1H2,ML_stress,S)
-                if loop % (sim_model.save_steps//10) == 0:
-                    print(f"step:{loop}, time:{time.time() - start_time}",flush=True)
-                    sim_model.save_data(model.save_folder)
-        sim_model.save_data(model.save_folder)
-        return sim_model
 
 
     def simulation_restart(model,rand_seed,step,tf,stop_time=400):

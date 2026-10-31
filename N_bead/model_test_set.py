@@ -87,29 +87,6 @@ class TestModel(object):
         stress_rmse = np.linalg.norm(error_stress)/np.linalg.norm(self.kBT*I -self.save['MD_stress'])
         self.save['loss']=np.array([E_loss, E_rmse, stress_loss, stress_rmse, H1H2_loss, H1H2_rmse])
 
-    def evalute_loss_M(self):
-        error_E=self.save['MD_E']-self.save['ML_E']
-        error_H1H2=self.save['MD_H1H2']-self.save['ML_H1H2']
-        error_stress=self.save['ML_stress']-self.save['MD_stress']
-        error_M=self.save['ML_M']-self.save['MD_M']
-        
-        E_loss = np.linalg.norm(error_E)
-        H1H2_loss = np.linalg.norm(error_H1H2)
-        stress_loss = np.linalg.norm(error_stress)
-        M_loss = np.linalg.norm(error_M)
-        for i in self.data_size:
-            E_loss=E_loss/float(i)
-            H1H2_loss=H1H2_loss/float(i)
-            stress_loss=stress_loss/float(i)
-            M_loss=M_loss/float(i)
-
-        I = np.tile(np.eye(3), self.data_size + [1, 1])
-
-        E_rmse = np.linalg.norm(error_E)/np.linalg.norm(self.save['MD_E'])
-        H1H2_rmse = np.linalg.norm(error_H1H2)/np.linalg.norm(self.save['MD_H1H2'])
-        stress_rmse = np.linalg.norm(error_stress)/np.linalg.norm(self.kBT*I -self.save['MD_stress'])
-        M_rmse = np.linalg.norm(error_M)/np.linalg.norm(self.save['MD_M'])
-        self.save['loss']=np.array([E_loss, E_rmse, stress_loss, stress_rmse, H1H2_loss, H1H2_rmse,M_loss,M_rmse])
 
     def save_data(self,save_name):
         savemat(save_name,self.save)
@@ -191,31 +168,6 @@ class TestModel(object):
         self.evalute_loss()
         return self
 
-    def main_train_MD_M(model,xr,ff,tf):
-        bs=model.batch_size
-        data_size=[bs*(xr.shape[0]//bs)]
-        self=TestModel(bs,model.c_num,data_size)
-
-        ds_dc_star, S0=model.get_S0()
-        def evaluate_bin(i):
-            xr_tmp=tf.constant(xr[i*bs:(i+1)*bs],dtype=tf.float32) # (bs,Np,Nbonds,3)
-            ff_tmp=tf.constant(ff[i*bs:(i+1)*bs],dtype=tf.float32) # (bs,Np,Nbonds,3)
-            stress=tf.reduce_mean(tf.matmul(xr_tmp,ff_tmp,transpose_a=True),axis=1)/model.Nbonds
-
-            c, MD_H1, MD_H2 , MD_E, MD_M=model.get_from_micro(xr_tmp,ff_tmp)
-            ML_H1H2, ML_E, ML_pi_p, S, ds_dc, ML_M= model.get_from_macro_train(c,ds_dc_star=ds_dc_star,S0=S0)
-            MD_H1H2=model.kBT*MD_H1-MD_H2
-            ML_stress= model.kBT*tf.eye(3, batch_shape = [bs],dtype=tf.float32)+ML_pi_p
-            self.collect_macro_data_1d(i,MD_E.numpy(),ML_E.numpy(),MD_H1H2.numpy(),ML_H1H2.numpy(),
-                                    ML_stress.numpy(),S.numpy(),ds_dc.numpy(),c.numpy())
-            self.collect_other_data_1d(i,'MD_stress',stress)
-            self.collect_other_data_1d(i,'MD_M',MD_M.numpy())
-            self.collect_other_data_1d(i,'ML_M',ML_M.numpy())
-            return
-        for i in range(xr.shape[0]//bs):
-                evaluate_bin(i)
-        self.evalute_loss_M()
-        return self
 
     # def main_train_eigen(model,xr,ff,tf):
     #     bs=model.batch_size
@@ -266,31 +218,6 @@ class TestModel(object):
         test_model.evalute_loss()
         return test_model
 
-    def main_test_MD_M(model,xr,ff,data_size,tf):
-        bs=model.batch_size
-        test_model=TestModel(bs,model.c_num,data_size)
-        ds_dc_star, S0=model.get_S0()
-        def evaluate_bin(i,j):
-            xr_tmp=tf.constant(xr[i*bs:(i+1)*bs,j],dtype=tf.float32) # (bs,Np,Nbonds,3)
-            ff_tmp=tf.constant(ff[i*bs:(i+1)*bs,j],dtype=tf.float32) # (bs,Np,Nbonds,3)
-            stress=tf.reduce_mean(tf.matmul(xr_tmp,ff_tmp,transpose_a=True),axis=1)/model.Nbonds
-
-            c, MD_H1, MD_H2 , MD_E, MD_M=model.get_from_micro(xr_tmp,ff_tmp)
-            ML_H1H2, ML_E, ML_pi_p, S, ds_dc, ML_M= model.get_from_macro_train(c,ds_dc_star=ds_dc_star,S0=S0)
-            MD_H1H2=model.kBT*MD_H1-MD_H2
-            ML_stress= model.kBT*tf.eye(3, batch_shape = [bs],dtype=tf.float32)+ML_pi_p
-            test_model.collect_macro_data(i,j,MD_E.numpy(),ML_E.numpy(),MD_H1H2.numpy(),ML_H1H2.numpy(),
-                                    ML_stress.numpy(),S.numpy(),ds_dc.numpy(),c.numpy())
-            test_model.collect_other_data(i,j,'MD_stress',stress)
-            test_model.collect_other_data(i,j,'MD_M',MD_M)
-            test_model.collect_other_data(i,j,'ML_M',ML_M)
-            return
-
-        for i in range(int(data_size[0]/bs)):
-            for j in range(data_size[1]):
-                evaluate_bin(i,j)
-        test_model.evalute_loss()
-        return test_model
 
 
     def main_test_eigen(model,xr,ff,data_size,tf):

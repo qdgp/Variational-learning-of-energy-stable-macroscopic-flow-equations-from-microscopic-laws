@@ -58,36 +58,12 @@ class load(object):
         if 'star' in ver:
             if 'bin2' in data_set:
                 return load.star_bin(bin=2,Np=1920)
-        elif 'chain-N15' in ver:
-            return load.chain_N15_sde(data_set)
         elif 'chain' in ver:
             if 'temp-bin2' in data_set:
                 return load.chain_temp(bin=2,Np=1920)
-            elif 'sde' in data_set:
-                return load.chain_N7_sde(data_set)
         sys.exit('data set not found')
 
-    def chain_N15_sde(data_set_name): # for chain
-        if 'sde-bin40-gamma-170' in data_set_name:
-            xr, ff = load_file('MD_chain_N15/SDE_gamma_170/sde_bin40_gamma_170.mat')
-        else:
-            sys.exit('data set not found')
 
-        Np=xr.shape[1]
-        stress=np.mean(ff.transpose((0,1,3,2)) @ xr,axis=1)/float(xr.shape[2])
-        print('xr:',xr.shape,'ff:',ff.shape,'stress:',stress.shape)
-        return xr, ff, stress, Np, data_set_name
-
-    def chain_N7_sde(data_set_name): # for chain
-        if 'sde-v2-bin32' in data_set_name:
-            xr, ff = load_file('MD_chain_N7/SDE_data_set_v2/sde_v2_bin32.mat')
-        else:
-            sys.exit('data set not found')
-
-        Np=xr.shape[1]
-        stress=np.mean(ff.transpose((0,1,3,2)) @ xr,axis=1)/float(xr.shape[2])
-        print('xr:',xr.shape,'ff:',ff.shape,'stress:',stress.shape)
-        return xr, ff, stress, Np, data_set_name
 
     def chain_temp(bin,Np):
         data_set_name=f'temp-bin{bin}'
@@ -117,17 +93,6 @@ class load(object):
             data_file =h5py.File(Folder+'MD_star_N7/box_60_60_100_fx_0.016/init.mat','r')
             xr = np.array(data_file['rr'],dtype=dtype).transpose((1,2,0)) # (Np,Nbonds,3)
             xr = np.expand_dims(xr,axis=0)
-        elif 'chain-N15' in ver:
-            SDE_Folder='/mnt/gs21/scratch/gepei/DeePN_chain_N15/SDE_gamma_170/results_var/'
-            data_file =h5py.File(SDE_Folder+f'gdot_00/Qsave_gdot_00_replica_1.mat','r')
-            xr=np.array(data_file['Qsave'],dtype=np.float32)[1:] # (Nsample,Np,Nbonds,3) (3000, 3, 1600, 14)
-            xr=np.transpose(xr[-20:],[0,2,3,1])
-            xr=np.reshape(xr,[1,32000,14,3])
-        elif 'chain-N7-sde' in ver:
-            data_file =h5py.File(Folder+'MD_chain_N7/SDE_data_set_v2/init.mat','r')
-            xr=np.array(data_file['Qsave'],dtype=np.float32)[1:] # (Nsample,Np,Nbonds,3) (200, 3, 1600, 6)
-            xr=np.transpose(xr[-20:],[0,2,3,1])
-            xr=np.reshape(xr,[1,32000,6,3])
         elif 'chain' in ver:
             data_file =h5py.File(Folder+'MD_chain_N7/box_60_60_100_init_2/init.mat','r')
             xr = np.array(data_file['xr'],dtype=dtype).transpose((0,2,3,1)) # (Nsample,Np,Nbonds,3)

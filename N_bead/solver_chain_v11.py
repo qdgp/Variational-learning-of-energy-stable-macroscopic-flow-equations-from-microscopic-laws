@@ -104,20 +104,3 @@ class StressModel(solver):
         E_basis=tf.concat([I,c,c2,c3,cx],axis=1)
         E_x=tf.concat([tr_c,tr_c2,tr_c3,tf.linalg.trace(cx)], axis = -1)    
         return E_x,E_basis
-    
-    def get_from_micro_with_MD_M(self,xr,ff):
-        # xr= [batch_size,Np,Nbonds,3]
-        # Af= [batch_size,Np,Nbonds,3]
-        Af=self.A @ ff
-        c_1, MD_H1_1, MD_H2_1 , MD_E_1, MD_M_1=self.get_from_micro_inner_with_MD_M(xr,Af)
-        
-        xr=tf.reverse(xr,axis=[2])
-        ff=tf.reverse(ff,axis=[2])
-        Af=self.A @ ff
-        c_2, MD_H1_2, MD_H2_2 , MD_E_2, MD_M_2=self.get_from_micro_inner_with_MD_M(xr,Af)
-        c = (c_1+c_2)/2.0
-        MD_H1 = (MD_H1_1+MD_H1_2)/2.0
-        MD_H2 = (MD_H2_1+MD_H2_2)/2.0
-        MD_E = (MD_E_1+MD_E_2)/2.0
-        MD_M = (MD_M_1+MD_M_2)/2.0
-        return c, MD_H1, MD_H2, MD_E, MD_M
