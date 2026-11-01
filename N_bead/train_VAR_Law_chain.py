@@ -222,16 +222,3 @@ try:
 except:
     print('simulation fx 0.016 Failed')
 ############################################################################
-
-from model_simulation_RollMill import SimulationModel as SMRM
-
-stop_time=6000
-Nbin=50
-model.batch_size=Nbin**2
-try:
-    sim_model=SMRM(0.1, stop_time, f_para=0.006, sigma=0.0, Nbin=Nbin, gamma=170, rand_seed=rand_seed, save_freq=8)
-    sim_model.save_name = f'sim_data_RollMill_{rand_seed}_{sim_model.fx}_dt_{sim_model.dt}_Nbin_{sim_model.Nbin}_gamma_{sim_model.gamma}.mat'
-    sim_model.main(model,tf)
-except Exception as e:
-    print(e)
-    sim_model.save_data(model.save_folder)
