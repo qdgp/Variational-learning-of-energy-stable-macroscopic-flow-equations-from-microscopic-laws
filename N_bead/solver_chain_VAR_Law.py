@@ -79,7 +79,7 @@ class StressModel(solver):
         I=tf.eye(3, batch_shape = [c.shape[0],1],dtype=self.tf_dtype)
         tr_c=tf.linalg.trace(c)
         tr_c2=tf.linalg.trace((c-I) @ (c-I)) / 100.0
-        tr_c3=tf.linalg.trace(c @ c @ c) / 1000.0
+        tr_c3 = (tf.linalg.trace((c-I) @ (c-I) @ (c-I)) +300*tr_c2) / 1000.0
 
         for i in range(c.shape[1]-1):
             c_tmp= tf.expand_dims(c[:,i,:,:], axis=1) - c[:,i+1:,:,:]
